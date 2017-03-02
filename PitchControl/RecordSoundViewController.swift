@@ -47,10 +47,18 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
         
         let session = AVAudioSession.sharedInstance()
         
-        // TODO: Change to proper try and catch
-        try! session.setCategory(AVAudioSessionCategoryPlayAndRecord, with: AVAudioSessionCategoryOptions.defaultToSpeaker)
+        do {
+            try session.setCategory(AVAudioSessionCategoryPlayAndRecord, with: AVAudioSessionCategoryOptions.defaultToSpeaker)
+        } catch {
+            showAlert(Alerts.AudioSessionError, message: String(describing: error))
+        }
         
-        try! audioRecorder = AVAudioRecorder(url: filePath!, settings: [:])
+        do {
+            audioRecorder = try AVAudioRecorder(url: filePath!, settings: [:])
+        } catch {
+            showAlert(Alerts.AudioRecorderError, message: String(describing: error))
+        }
+        
         audioRecorder.delegate = self
         audioRecorder.isMeteringEnabled = true
         audioRecorder.prepareToRecord()
